@@ -1,3 +1,5 @@
+import pygame.mouse
+
 from utils import *
 
 WIN = pygame.display.set_mode((WIDTH + RIGHT_TOOLBAR_WIDTH, HEIGHT))
@@ -232,20 +234,59 @@ for i in range(int(len(COLORS)/2)):
 
 #Right toolbar buttonst
 # need to add change toolbar button.
-for i in range(10):
-    if i == 0:
-        buttons.append(Button(HEIGHT - 2*button_width,(i*button_height)+5,button_width,button_height,WHITE,name="Change"))#Change toolbar buttons
-    else: 
-        buttons.append(Button(HEIGHT - 2*button_width,(i*button_height)+5,button_width,button_height,WHITE,"B"+str(i-1), BLACK))#append tools
+#for i in range(10):
+   # if i == 0:
+    #    buttons.append(Button(HEIGHT - 2*button_width,(i*button_height)+5,button_width,button_height,WHITE,name="Change"))#Change toolbar buttons
+    #else:
+     #   buttons.append(Button(HEIGHT - 2*button_width,(i*button_height)+5,button_width,button_height,WHITE,"B"+str(i-1), BLACK))#append tools
 
 buttons.append(Button(WIDTH - button_space, button_y_top_row, button_width, button_height, WHITE, "Erase", BLACK))  # Erase Button
 buttons.append(Button(WIDTH - button_space, button_y_bot_row, button_width, button_height, WHITE, "Clear", BLACK))  # Clear Button
 buttons.append(Button(WIDTH - 3*button_space + 5, button_y_top_row,button_width-5, button_height-5, name = "FillBucket",image_url="assets/paint-bucket.png")) #FillBucket
 buttons.append(Button(WIDTH - 3*button_space + 45, button_y_top_row,button_width-5, button_height-5, name = "Brush",image_url="assets/paint-brush.png")) #Brush
+buttons.append(Button(HEIGHT - 2*button_width,button_height+350,button_width,button_height,WHITE,"Draw Shape",BLACK))
+buttons.append(Button(HEIGHT - 2*button_width,button_height+200,button_width,button_height,WHITE,"Draw Curve",BLACK))
 
 
-draw_button = Button(5, HEIGHT - TOOLBAR_HEIGHT/2 - 30, 60, 60, drawing_color)
+draw_button = Button(5, HEIGHT - TOOLBAR_HEIGHT/2 - 30, 60, 60,drawing_color)
 buttons.append(draw_button)
+
+def get_circle_coordinates(X,Y,radius):
+    list = []
+    radius = 5
+    X = 21
+    Y = 20
+    for i in range(X - 5, X + 6):
+        for j in range(Y - 5, Y + 6):
+            if not (((X - i) * (X - i)) + ((Y - j) * (Y - j))) < (radius * radius):
+                point = i,j
+                list.append(point)
+                #grid[i][j] = drawing_color
+            if i == X - 5 and j not in range(X - 3, X + 2):
+                point = i,j
+                list.remove(point)
+                #grid[i][j] = WHITE
+            if i == X - 4 and (j == Y - 5 or j == Y + 5 or j == Y-4 or j == Y+4):
+                point = i, j
+                list.remove(point)
+                #grid[i][j] = WHITE
+            if i == X + 5 and j not in range(X - 3, X + 2):
+                point = i, j
+                list.remove(point)
+               # grid[i][j] = WHITE
+            if i == X + 4 and (j == Y - 5 or j == Y + 5 or j == Y-4 or j == Y+4):
+                point = i, j
+                list.remove(point)
+                #grid[i][j] = WHITE
+            if (i == X-3 or i == X+3) and j == Y-5:
+                point = i, j
+                list.remove(point)
+                # grid[i][j] = WHITE
+            if (i == X-3 or i == X+3) and j == Y+5:
+                point = i, j
+                list.remove(point)
+
+    return list
 
 while run:
     clock.tick(FPS) #limiting FPS to 60 or any other value
@@ -295,6 +336,41 @@ while run:
                      
                     if button.name == "Brush":
                         STATE = "COLOR"
+                        break
+
+                    if button.text == "Draw Shape":
+                        buttons.append(Button(HEIGHT - 2 * button_width,button_height + 300, button_width, button_height,WHITE, "Draw Circle", BLACK))
+                        buttons.append(Button(HEIGHT - 2 * button_width, button_height + 250, button_width, button_height, WHITE, "Draw Heart", BLACK))
+
+
+                        break
+
+                    if button.text == "Draw Curve":
+                        buttons.append(
+                            Button(HEIGHT - 2 * button_width, button_height + 150, button_width, button_height, WHITE,
+                                   "Draw Arc", BLACK))
+                        buttons.append(
+                            Button(HEIGHT - 2 * button_width, button_height + 100, button_width, button_height, WHITE,
+                                   "Draw Bezier", BLACK))
+                        buttons.append(
+                            Button(HEIGHT - 2 * button_width, button_height + 50, button_width, button_height, WHITE,
+                                   "Draw BSpline", BLACK))
+
+                        break
+
+                    if button.text == "Draw Circle":
+                        radius = 5
+                        X = 21
+                        Y = 20
+                        coordinates = get_circle_coordinates(X, Y, radius)
+                        print(coordinates)
+                        for i in coordinates:
+                            x, y = i
+                            grid[x][y] = drawing_color
+                        break
+
+                    if button.text == "Draw Heart":
+                        grid[10][10] = drawing_color
                         break
                     
                     drawing_color = button.color
