@@ -1,3 +1,5 @@
+import pygame.mouse
+
 from utils import *
 
 WIN = pygame.display.set_mode((WIDTH + RIGHT_TOOLBAR_WIDTH, HEIGHT))
@@ -232,21 +234,170 @@ for i in range(int(len(COLORS)/2)):
 
 #Right toolbar buttonst
 # need to add change toolbar button.
-for i in range(10):
-    if i == 0:
-        buttons.append(Button(HEIGHT - 2*button_width,(i*button_height)+5,button_width,button_height,WHITE,name="Change"))#Change toolbar buttons
-    else: 
-        buttons.append(Button(HEIGHT - 2*button_width,(i*button_height)+5,button_width,button_height,WHITE,"B"+str(i-1), BLACK))#append tools
+#for i in range(10):
+   # if i == 0:
+    #    buttons.append(Button(HEIGHT - 2*button_width,(i*button_height)+5,button_width,button_height,WHITE,name="Change"))#Change toolbar buttons
+    #else:
+     #   buttons.append(Button(HEIGHT - 2*button_width,(i*button_height)+5,button_width,button_height,WHITE,"B"+str(i-1), BLACK))#append tools
 
 buttons.append(Button(WIDTH - button_space, button_y_top_row, button_width, button_height, WHITE, "Erase", BLACK))  # Erase Button
 buttons.append(Button(WIDTH - button_space, button_y_bot_row, button_width, button_height, WHITE, "Clear", BLACK))  # Clear Button
 buttons.append(Button(WIDTH - 3*button_space + 5, button_y_top_row,button_width-5, button_height-5, name = "FillBucket",image_url="assets/paint-bucket.png")) #FillBucket
 buttons.append(Button(WIDTH - 3*button_space + 45, button_y_top_row,button_width-5, button_height-5, name = "Brush",image_url="assets/paint-brush.png")) #Brush
+buttons.append(Button(HEIGHT - 2*button_width,button_height+350,button_width,button_height,WHITE,"Draw Shape",BLACK))
+buttons.append(Button(HEIGHT - 2*button_width,button_height+200,button_width,button_height,WHITE,"Draw Curve",BLACK))
+buttons.append(Button(HEIGHT - 2*button_width,button_height,button_width,button_height,WHITE,"- - - - - - -",BLACK))
 
 
-draw_button = Button(5, HEIGHT - TOOLBAR_HEIGHT/2 - 30, 60, 60, drawing_color)
+draw_button = Button(5, HEIGHT - TOOLBAR_HEIGHT/2 - 30, 60, 60,drawing_color)
 buttons.append(draw_button)
 
+def get_circle_coordinates(X,Y,radius):
+    list= []
+    for i in range(5):
+        list.append((X-5,Y-2+i))
+        list.append((X+5,Y-2+i))
+
+    for i in range(3):
+        list.append((X-2-i,Y-5+i))
+        list.append((X - 2 - i, Y + 5 - i))
+        list.append((X + 4 - i, Y - 3 - i))
+        list.append((X + 4 - i, Y + 3 + i))
+
+    for i in range(3):
+        list.append((X-1+i,Y-5))
+        list.append((X - 1 + i, Y + 5))
+    return list
+
+def get_dotted_circle_coordinates(X,Y):
+    list = []
+    for i in range(5):
+        list.append((X - 5, Y - 2 + i))
+
+    for i in range(3):
+        list.append((X - 2 - i, Y + 5 - i))
+
+    for i in range(3):
+       list.append((X - 1 + i, Y + 5))
+
+    for i in range(3):
+        list.append((X + 4 - i, Y + 3 + i))
+
+    for i in range(5):
+        list.append((X + 5, Y - 2 + i))
+
+    for i in range(3):
+        list.append((X + 4 - i, Y - 3 - i))
+
+    for i in range(3):
+        list.append((X - 1 + i, Y - 5))
+
+    for i in range(3):
+        list.append((X - 2 - i, Y - 5 + i))
+
+    return list
+
+
+
+
+def draw_circle():
+    radius = 5
+    pos = pygame.mouse.get_pos()
+    print(pos)
+    dotted = True
+    x, y = get_row_col_from_pos(pos)
+    if DOTTED:
+         coordinates = get_dotted_circle_coordinates(x,y)
+         for i in range(0,len(coordinates),2):
+             x, y = coordinates[i]
+             grid[x][y] = drawing_color
+    else:
+        coordinates = get_circle_coordinates(x, y, radius)
+        for i in coordinates:
+            x, y = i
+            grid[x][y] = drawing_color
+
+
+
+def get_heart_coordinates(X,Y):
+    list = []
+    for i in range(3):
+        list.append((X - i, Y - i))
+        list.append((X - i, Y + i))
+        list.append((X-3,Y-3-i))
+        list.append((X - 3, Y + 3 + i))
+
+    for i in range(2):
+        list.append((X - 2 + i, Y - 6 - i))
+        list.append((X - 2 + i, Y + 6 + i))
+        list.append((X + i, Y - 7 ))
+        list.append((X + i, Y + 7 ))
+
+    for i in range(7):
+        list.append((X + 2 + i, Y - 6 + i))
+        list.append((X + 2 + i, Y + 6 - i))
+
+    return list
+
+def get_dotted_heart_coordinates(X,Y):
+    list = []
+    for i in range(3):
+        #list.append((X - i, Y - i))
+        list.append((X - i, Y + i))
+
+    for i in range(3):
+        list.append((X - 3, Y + 3 + i))
+
+    for i in range(2):
+        list.append((X - 2 + i, Y + 6 + i))
+
+    for i in range(2):
+        list.append((X + i, Y + 7))
+
+    for i in range(7):
+        list.append((X + 2 + i, Y + 6 - i))
+
+    for i in range(1,7):
+        list.append((X + 8 - i, Y - i))
+
+    for i in range(2):
+        list.append((X + 1 - i, Y - 7))
+
+    for i in range(2):
+        list.append((X - 1 - i, Y - 7 + i))
+
+    for i in range(3):
+        list.append((X - 3, Y - 5 + i))
+
+    for i in range(2):
+        list.append((X - 2 + i, Y - 2 + i))
+
+
+
+
+    return list
+
+
+def draw_heart():
+    radius = 5
+    pos = pygame.mouse.get_pos()
+    print(pos)
+    dotted = True
+    x, y = get_row_col_from_pos(pos)
+    if DOTTED:
+         coordinates = get_dotted_heart_coordinates(x,y)
+         for i in range(0,len(coordinates),2):
+             x, y = coordinates[i]
+             grid[x][y] = drawing_color
+    else:
+        coordinates = get_heart_coordinates(x, y)
+        for i in coordinates:
+            x,y = i
+            grid[x][y] = drawing_color
+
+
+
+clicks = 0
 while run:
     clock.tick(FPS) #limiting FPS to 60 or any other value
 
@@ -265,6 +416,11 @@ while run:
 
                 elif STATE == "FILL":
                     fill_bucket(row, col, drawing_color)
+                elif STATE == "DRAW CIRCLE":
+                    draw_circle()
+                elif STATE == "DRAW HEART":
+                    draw_heart()
+
 
             except IndexError:
                 for button in buttons:
@@ -295,6 +451,41 @@ while run:
                      
                     if button.name == "Brush":
                         STATE = "COLOR"
+                        break
+
+                    if button.text == "Draw Shape":
+                        buttons.append(Button(HEIGHT - 2 * button_width,button_height + 300, button_width, button_height,WHITE, "Draw Circle", BLACK))
+                        buttons.append(Button(HEIGHT - 2 * button_width, button_height + 250, button_width, button_height, WHITE, "Draw Heart", BLACK))
+
+
+                        break
+
+                    if button.text == "Draw Curve":
+                        buttons.append(
+                            Button(HEIGHT - 2 * button_width, button_height + 150, button_width, button_height, WHITE,
+                                   "Draw Arc", BLACK))
+                        buttons.append(
+                            Button(HEIGHT - 2 * button_width, button_height + 100, button_width, button_height, WHITE,
+                                   "Draw Bezier", BLACK))
+                        buttons.append(
+                            Button(HEIGHT - 2 * button_width, button_height + 50, button_width, button_height, WHITE,
+                                   "Draw BSpline", BLACK))
+
+                        break
+
+                    if button.text == "Draw Circle":
+                        STATE = "DRAW CIRCLE"
+                        break
+
+                    if button.text == "Draw Heart":
+                        STATE = "DRAW HEART"
+                        break
+
+                    if button.text == "- - - - - - -":
+                        if DOTTED:
+                            DOTTED = False
+                        else:
+                            DOTTED = True
                         break
                     
                     drawing_color = button.color
