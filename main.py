@@ -90,44 +90,6 @@ def draw(win, grid, buttons):
     draw_mouse_position_text(win)
     pygame.display.update()
 
-def paintarc(row,col,radius):
-    if DOTTED:
-        grid[row][col]=drawing_color
-        for i in range(radius-1):
-            if(i%2!=0):
-                grid[row-i][col+i]=drawing_color
-            x=row-i
-            y=col+i
-        grid[x][y+1]=drawing_color
-        for i in range(3):
-            if(i%2!=0):
-                grid[x+i][y+1+i]=drawing_color
-            
-        for i in range(3,6):
-            if(i%2!=0):
-                grid[x+i][y+4]=drawing_color
-        grid[x+6][y+3]=drawing_color
-        grid[x+7][y+2]=drawing_color    
-        for i in range(radius):
-            if(i%2==0):
-                grid[row][col+i]=drawing_color
-            
-    else:
-        grid[row][col]=drawing_color
-        for i in range(radius-1):
-            grid[row-i][col+i]=drawing_color
-            x=row-i
-            y=col+i
-        grid[x][y+1]=drawing_color
-        for i in range(3):
-            grid[x+i][y+1+i]=drawing_color
-        for i in range(3,6):
-             grid[x+i][y+4]=drawing_color
-        grid[x+6][y+3]=drawing_color
-        grid[x+7][y+2]=drawing_color    
-        for i in range(radius):
-            grid[row][col+i]=drawing_color  
-
 def draw_brush_widths(win):
     brush_widths = [
         Button(rtb_x - size_small/2, 480, size_small, size_small, drawing_color, None, None, "ellipse"),    
@@ -426,6 +388,32 @@ def draw_heart():
             x,y = i
             grid[x][y] = drawing_color
 
+def paintarc(row,col):
+    if DOTTED:
+        # grid[row][col]=drawing_color
+        for i in range(5):
+            if(i%2!=0):
+                grid[row-i][col-4+i]=drawing_color
+            x=row-i
+            y=col-4+i
+        grid[x][y+1]=drawing_color
+        for i in range(4):
+            if(i%2!=0):
+                grid[x+i][y+2+i]=drawing_color
+            
+        
+            
+    else:
+        
+        for i in range(4):
+            grid[row-i][col-4+i]=drawing_color
+            x=row-i
+            y=col-4+i
+        grid[x][y+1]=drawing_color
+        grid[x][y+2]=drawing_color
+        for i in range(4):
+            grid[x+i][y+2+i]=drawing_color
+
 def draw_bezier():
     pos = pygame.mouse.get_pos()
     print(pos)
@@ -530,7 +518,7 @@ while run:
                 elif STATE == "DRAW HEART":
                     draw_heart()
                 elif STATE == "ARC": #Draws an arc
-                    paintarc(row,col,10)
+                    paintarc(row,col)
                 elif STATE == "DRAW BEZIER":
                     draw_bezier()
                 elif STATE == "DRAW BSPLINE":
