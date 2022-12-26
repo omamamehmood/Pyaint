@@ -90,7 +90,6 @@ def draw(win, grid, buttons):
     draw_mouse_position_text(win)
     pygame.display.update()
 
-
 def draw_brush_widths(win):
     brush_widths = [
         Button(rtb_x - size_small/2, 480, size_small, size_small, drawing_color, None, None, "ellipse"),    
@@ -121,7 +120,7 @@ def get_row_col_from_pos(pos):
 
     if row >= ROWS:
         raise IndexError
-    if col >= ROWS:
+    if col >= COLS:
         raise IndexError
     return row, col
 
@@ -297,9 +296,6 @@ def get_dotted_circle_coordinates(X,Y):
 
     return list
 
-
-
-
 def draw_circle():
     radius = 5
     pos = pygame.mouse.get_pos()
@@ -316,8 +312,6 @@ def draw_circle():
         for i in coordinates:
             x, y = i
             grid[x][y] = drawing_color
-
-
 
 def get_heart_coordinates(X,Y):
     list = []
@@ -377,7 +371,6 @@ def get_dotted_heart_coordinates(X,Y):
 
     return list
 
-
 def draw_heart():
     radius = 5
     pos = pygame.mouse.get_pos()
@@ -395,8 +388,112 @@ def draw_heart():
             x,y = i
             grid[x][y] = drawing_color
 
+def paintarc(row,col):
+    if DOTTED:
+        # grid[row][col]=drawing_color
+        for i in range(5):
+            if(i%2!=0):
+                grid[row-i][col-4+i]=drawing_color
+            x=row-i
+            y=col-4+i
+        grid[x][y+1]=drawing_color
+        for i in range(4):
+            if(i%2!=0):
+                grid[x+i][y+2+i]=drawing_color
+            
+        
+            
+    else:
+        
+        for i in range(4):
+            grid[row-i][col-4+i]=drawing_color
+            x=row-i
+            y=col-4+i
+        grid[x][y+1]=drawing_color
+        grid[x][y+2]=drawing_color
+        for i in range(4):
+            grid[x+i][y+2+i]=drawing_color
 
+def draw_bezier():
+    pos = pygame.mouse.get_pos()
+    print(pos)
+    x, y = get_row_col_from_pos(pos)
+    step=1
 
+    if DOTTED:
+        step=2
+    
+    for i in range(0,3,1):
+        for j in range(i,i+3,step):
+            a=x-i-3
+            b=y+j+2*i
+            if inBounds(a,b):
+                grid[a][b] = drawing_color
+                
+    for i in range(0,2,1):
+        for j in range(i,i+2,step):
+            a=x-i-1
+            b=y+j+i-4
+            if inBounds(a,b):
+                grid[a][b] = drawing_color
+                
+    if inBounds(x,y-5):
+        grid[x][y-5] = drawing_color
+    
+    for i in range(0,3,1):
+        for j in range(i,i+3,step):
+            a=x+i+3
+            b=y+j+2*i
+            if inBounds(a,b):
+                grid[a][b] = drawing_color
+                
+    for i in range(0,2,1):
+        for j in range(i,i+2,step):
+            a=x+i+1
+            b=y+j+i-4
+            if inBounds(a,b):
+                grid[a][b] = drawing_color
+                
+def get_solid_bspline_coordinates(X,Y):
+    list= []
+    for i in range(4):
+        list.append((X + i, Y - 7 - i))
+        list.append((X - i, Y - 7 + i))
+    list.append((X,Y))
+    for i in range(4):
+        list.append((X + i, Y + 7 - i))
+        list.append((X - i, Y + 7 + i))
+    for i in range(4):
+        list.append((X - i, Y - i))
+        list.append((X + i, Y + i))
+    return list
+
+def get_dotted_bspline_coordinates(X,Y):
+    list= []
+    for i in range(0,4,2):
+        list.append((X + i, Y - 7 - i))
+        list.append((X - i, Y - 7 + i))
+    list.append((X,Y))
+    for i in range(0,4,2):
+        list.append((X + i, Y + 7 - i))
+        list.append((X - i, Y + 7 + i))
+    for i in range(0,4,2):
+        list.append((X - i, Y - i))
+        list.append((X + i, Y + i))
+    return list
+
+def draw_bspline():
+    pos = pygame.mouse.get_pos()
+    x, y = get_row_col_from_pos(pos)
+    if DOTTED:
+        coordinates = get_dotted_bspline_coordinates(x,y)
+    else:
+        coordinates = get_solid_bspline_coordinates(x,y)
+
+    for i in coordinates:
+            x, y = i
+            grid[x][y] = drawing_color
+   
 clicks = 0
 while run:
     clock.tick(FPS) #limiting FPS to 60 or any other value
@@ -420,8 +517,13 @@ while run:
                     draw_circle()
                 elif STATE == "DRAW HEART":
                     draw_heart()
-
-
+                elif STATE == "ARC": #Draws an arc
+                    paintarc(row,col)
+                elif STATE == "DRAW BEZIER":
+                    draw_bezier()
+                elif STATE == "DRAW BSPLINE":
+                    draw_bspline()
+                    
             except IndexError:
                 for button in buttons:
                     if not button.clicked(pos):
@@ -480,7 +582,15 @@ while run:
                     if button.text == "Draw Heart":
                         STATE = "DRAW HEART"
                         break
-
+                    if button.text=="Draw Arc":
+                        STATE="ARC"
+                        break
+                    if button.text == "Draw Bezier":
+                        STATE = "DRAW BEZIER"
+                        break
+                    if button.text == "Draw BSpline":
+                        STATE = "DRAW BSPLINE"
+                        break
                     if button.text == "- - - - - - -":
                         if DOTTED:
                             DOTTED = False
