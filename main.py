@@ -306,12 +306,14 @@ def draw_circle():
          coordinates = get_dotted_circle_coordinates(x,y)
          for i in range(0,len(coordinates),2):
              x, y = coordinates[i]
-             grid[x][y] = drawing_color
+             if inBounds(x,y):
+                grid[x][y] = drawing_color
     else:
         coordinates = get_circle_coordinates(x, y, radius)
         for i in coordinates:
             x, y = i
-            grid[x][y] = drawing_color
+            if inBounds(x,y):
+                grid[x][y] = drawing_color
 
 def get_heart_coordinates(X,Y):
     list = []
@@ -381,38 +383,47 @@ def draw_heart():
          coordinates = get_dotted_heart_coordinates(x,y)
          for i in range(0,len(coordinates),2):
              x, y = coordinates[i]
-             grid[x][y] = drawing_color
+             if inBounds(x,y):
+                grid[x][y] = drawing_color
     else:
         coordinates = get_heart_coordinates(x, y)
         for i in coordinates:
             x,y = i
-            grid[x][y] = drawing_color
+            if inBounds(x,y):
+                grid[x][y] = drawing_color
 
 def paintarc(row,col):
     if DOTTED:
         # grid[row][col]=drawing_color
         for i in range(5):
             if(i%2!=0):
-                grid[row-i][col-4+i]=drawing_color
+                if inBounds(row-i,col-4+i):
+                    grid[row-i][col-4+i]=drawing_color
             x=row-i
             y=col-4+i
-        grid[x][y+1]=drawing_color
+        if inBounds(x,y+1):
+            grid[x][y+1]=drawing_color
         for i in range(4):
             if(i%2!=0):
-                grid[x+i][y+2+i]=drawing_color
+                if inBounds(x+i,y+2+i):
+                    grid[x+i][y+2+i]=drawing_color
             
         
             
     else:
         
         for i in range(4):
-            grid[row-i][col-4+i]=drawing_color
+            if inBounds(row-i,col-4+i):
+                grid[row-i][col-4+i]=drawing_color
             x=row-i
             y=col-4+i
-        grid[x][y+1]=drawing_color
-        grid[x][y+2]=drawing_color
+        if inBounds(x,y+1):
+            grid[x][y+1]=drawing_color
+        if inBounds(x,y+2):
+            grid[x][y+2]=drawing_color
         for i in range(4):
-            grid[x+i][y+2+i]=drawing_color
+            if inBounds(x+i,y+2+i):
+                grid[x+i][y+2+i]=drawing_color
 
 def draw_bezier():
     pos = pygame.mouse.get_pos()
@@ -492,7 +503,8 @@ def draw_bspline():
 
     for i in coordinates:
             x, y = i
-            grid[x][y] = drawing_color
+            if inBounds(x,y):
+                grid[x][y] = drawing_color
    
 clicks = 0
 while run:
