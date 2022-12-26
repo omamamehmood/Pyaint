@@ -61,6 +61,8 @@ ROWS = COLS     = 40    #increase to have smaller pixels
 
 TOOLBAR_HEIGHT  = HEIGHT - WIDTH
 
+DOTTED = False
+
 RIGHT_TOOLBAR_WIDTH = 75
 
 PIXEL_SIZE      = WIDTH // COLS
