@@ -304,7 +304,7 @@ def draw_circle():
     radius = 5
     pos = pygame.mouse.get_pos()
     print(pos)
-    dotted = True
+    DOTTED = True
     x, y = get_row_col_from_pos(pos)
     if DOTTED:
          coordinates = get_dotted_circle_coordinates(x,y)
@@ -382,7 +382,7 @@ def draw_heart():
     radius = 5
     pos = pygame.mouse.get_pos()
     print(pos)
-    dotted = True
+    DOTTED = True
     x, y = get_row_col_from_pos(pos)
     if DOTTED:
          coordinates = get_dotted_heart_coordinates(x,y)
